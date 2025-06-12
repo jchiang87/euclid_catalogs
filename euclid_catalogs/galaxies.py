@@ -1,5 +1,5 @@
 """
-skyCatalogs interface to Euclid star catalogs.
+skyCatalogs interface to Euclid galaxy catalogs.
 """
 import os
 from collections import namedtuple
@@ -12,7 +12,7 @@ from skycatalogs.objects import BaseObject, ObjectCollection
 from .utils import MilkyWayExtinction, load_lsst_bandpasses, object_type_config
 
 
-__all__ = ["EuclidGalaxyCollection", "EuclidGalaxyObject"]
+__all__ = ["EuclidGalaxyCollection", "EuclidGalaxy"]
 
 
 MW_EXT = MilkyWayExtinction()
@@ -27,7 +27,7 @@ _GALAXY_FIELDS = ["SOURCE_ID", "RA", "DEC", "Z_OBS", "BULGE_R50",
 EuclidGalaxyParams = namedtuple("EuclidGalaxyParams", _GALAXY_FIELDS)
 
 
-class EuclidGalaxyObject(BaseObject):
+class EuclidGalaxy(BaseObject):
 
     def __init__(self, params, parent_collection, index):
         super().__init__(params.RA,
@@ -86,7 +86,7 @@ class EuclidGalaxyCollection(ObjectCollection):
         self._read_catalog_files(region, galaxy_catalog_dir)
         self._sky_catalog = sky_catalog
         self._object_type_unique = self._object_type
-        self._object_class = EuclidGalaxyObject
+        self._object_class = EuclidGalaxy
         self._uniform_object_type = True
 
     @property
@@ -154,7 +154,7 @@ class EuclidGalaxyCollection(ObjectCollection):
 
     def __getitem__(self, index):
         if isinstance(index, int) or isinstance(index, np.int64):
-            return EuclidGalaxyObject(self.params[index], self, index)
+            return EuclidGalaxy(self.params[index], self, index)
         elif isinstance(index, slice):
             return [self.__getitem__(i) for i in range(len(self))[index]]
         elif isinstance(index, tuple) and isinstance(index[0], Iterable):
@@ -167,7 +167,7 @@ class EuclidGalaxyCollection(ObjectCollection):
     def register(sky_catalog, object_type):
         sky_catalog.cat_cxt.register_source_type(
             EuclidGalaxyCollection._object_type,
-            object_class=EuclidGalaxyObject,
+            object_class=EuclidGalaxy,
             collection_class=EuclidGalaxyCollection,
             custom_load=True
         )
