@@ -146,6 +146,7 @@ class EuclidGalaxyCollection(ObjectCollection):
         # Neglect intrinsic reddening and just apply Milky Way extinction.
         sed = MW_EXT.apply(sed, params.AV)
         sed = sed.withMagnitude(params.ref_mag, LSST_BPS[self.ref_band])
+        sed = sed.atRedshift(params.Z_OBS)
         return sed
 
     @property
