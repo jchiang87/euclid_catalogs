@@ -1,11 +1,13 @@
 from .utils import object_type_config
 from .stars import EuclidStarCollection
+from .galaxies import EuclidGalaxyCollection
 
 
 __all__ = ['register_objects']
 
 
-COLLECTION_CLASS_MAP = {"EuclidStarCollection": EuclidStarCollection}
+COLLECTION_CLASS_MAP = {"EuclidStarCollection": EuclidStarCollection,
+                        "EuclidGalaxyCollection": EuclidGalaxyCollection}
 
 
 def register_objects(sky_catalog, object_type):

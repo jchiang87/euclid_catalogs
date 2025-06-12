@@ -8,6 +8,14 @@ object_types:
     sed_file: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/StarCat_GAIA_BESANCON_R11/EUC-TEST-SSEDLIB-2022-11-21T102000.000.fits
     star_catalog_dir: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/StarCat_GAIA_BESANCON_R11
     ref_band: r
+  Euclid_galaxies:
+    area_partition: None
+    module: euclid_catalogs
+    collection_class: EuclidGalaxyCollection
+    sed_file: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/Galcat_fs2_dr1_stage1/EUC-TEST-GSEDLIB-2022-11-21T102000.000.fits
+    ext_law_file: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/Galcat_fs2_dr1_stage1/EUC-TEST-GEXTLAWLIB-2022-12-19T203100.000.fits
+    galaxy_catalog_dir: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/Galcat_fs2_dr1_stage1
+    ref_band: r
 skycatalog_root: .
 provenance:
   versioning:
