@@ -1,0 +1,14 @@
+catalog_dir: .
+catalog_name: skyCatalog
+object_types:
+  Euclid_stars:
+    area_partition: None
+    module: euclid_catalogs
+    collection_class: EuclidStarCollection
+    sed_file: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/StarCat_GAIA_BESANCON_R11/EUC-TEST-SSEDLIB-2022-11-21T102000.000.fits
+    star_catalog_dir: /home/jchiang/work/Rubin/Euclid-Rubin_DDP_IWG/Euclid_catalogs/StarCat_GAIA_BESANCON_R11
+    ref_band: r
+skycatalog_root: .
+provenance:
+  versioning:
+    schema_version: 1.3.0
