@@ -17,13 +17,13 @@ psf:
            type: Gaussian
            fwhm: 0.3
 
-# Turn off check pointing for this example.
-input.checkpoint: ""
+## Turn off check pointing:
+#input.checkpoint: ""
 
 input.sky_catalog.file_name: ./skyCatalog.yaml
 input.opsim_data.file_name: baseline_v4.3.5_10yrs.db
 input.opsim_data.visit: 14980
-image.nobjects: 10000
+image.nobjects: 100000
 #image.sky_level: 0
 
 output.dir: output # default `fits`

@@ -95,14 +95,17 @@ class EuclidStarCollection(ObjectCollection):
         sed_index = data['SED_TEMPLATE']
         Av = data['AV']  # noqa: N806
         fnu = data[f'TU_FNU_{self.ref_band.upper()}_LSST']  # flux in jy
-        ref_mag = -2.5*np.log10(fnu) + 8.9  # convert to AB mag
         obj_id = data['SOURCE_ID']
         mask = region.compute_mask(ra, dec)
+        # Remove objects with non-positive fluxes
+        mask = np.logical_or(mask, fnu <= 0.0)
         self._ra.extend(np.ma.array(ra, mask=mask).compressed())
         self._dec.extend(np.ma.array(dec, mask=mask).compressed())
         self._sed_index.extend(np.ma.array(sed_index, mask=mask).compressed())
         self._Av.extend(np.ma.array(Av, mask=mask).compressed())
-        self._ref_mag.extend(np.ma.array(ref_mag, mask=mask).compressed())
+        fnu = np.ma.array(fnu, mask=mask).compressed()
+        ref_mag = -2.5*np.log10(fnu) + 8.9  # convert to AB mag
+        self._ref_mag.extend(ref_mag)
         self._id.extend([str(_) for _ in
                          np.ma.array(obj_id, mask=mask).compressed()])
 

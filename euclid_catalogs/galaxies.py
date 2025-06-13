@@ -19,10 +19,10 @@ MW_EXT = MilkyWayExtinction()
 LSST_BPS = load_lsst_bandpasses()
 
 
-_GALAXY_FIELDS = ["SOURCE_ID", "RA", "DEC", "Z_OBS", "BULGE_R50",
+_GALAXY_FIELDS = ("SOURCE_ID", "RA", "DEC", "Z_OBS", "BULGE_R50",
                   "BULGE_NSERSIC", "BULGE_AXIS_RATIO", "INCLINATION_ANGLE",
                   "KAPPA", "GAMMA1", "GAMMA2", "SED_TEMPLATE_1",
-                  "EXT_LAW_1", "EBV_1", "AV", "ref_mag"]
+                  "EXT_LAW_1", "EBV_1", "AV", "REF_MAG")
 
 EuclidGalaxyParams = namedtuple("EuclidGalaxyParams", _GALAXY_FIELDS)
 
@@ -83,6 +83,7 @@ class EuclidGalaxyCollection(ObjectCollection):
         self._read_sed_data(sed_file)
         self._read_ext_law_data(ext_law_file)
         self.ref_band = ref_band
+        self._ref_fnu_column = f"TU_FNU_{ref_band.upper()}_LSST_MAG"
         self._read_catalog_files(region, galaxy_catalog_dir)
         self._sky_catalog = sky_catalog
         self._object_type_unique = self._object_type
@@ -124,13 +125,17 @@ class EuclidGalaxyCollection(ObjectCollection):
             data = hdus[1].data.copy()
         ra = data['RA']
         dec = data['DEC']
+        fnu = data[self._ref_fnu_column]
         mask = region.compute_mask(ra, dec)
+        mask = np.logical_or(mask, fnu <= 0.0)
         param_columns = {}
-        for field in _GALAXY_FIELDS:
-            param_columns[field] \
-                = np.ma.array(data[field], mask=mask).compressed()
+        for column in _GALAXY_FIELDS[:-1]:
+            param_columns[column] \
+                = np.ma.array(data[column], mask=mask).compressed()
         param_columns['SOURCE_ID'] = [str(_) for _ in
                                       param_columns['SOURCE_ID']]
+        fnu = np.ma.array(fnu, mask=mask).compressed()
+        param_columns['REF_MAG'] = -2.5*np.log10(fnu) + 8.9  # fnu -> AB mag
         self._ra.extend(param_columns['RA'])
         self._dec.extend(param_columns['DEC'])
         self._id.extend(param_columns['SOURCE_ID'])
@@ -145,7 +150,7 @@ class EuclidGalaxyCollection(ObjectCollection):
         sed = galsim.SED(lut, wave_type='nm', flux_type='flambda')
         # Neglect intrinsic reddening and just apply Milky Way extinction.
         sed = MW_EXT.apply(sed, params.AV)
-        sed = sed.withMagnitude(params.ref_mag, LSST_BPS[self.ref_band])
+        sed = sed.withMagnitude(params.REF_MAG, LSST_BPS[self.ref_band])
         sed = sed.atRedshift(params.Z_OBS)
         return sed
 
